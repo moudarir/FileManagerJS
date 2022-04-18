@@ -1,18 +1,18 @@
-import { devices } from "@playwright/test";
+import { devices, PlaywrightTestConfig } from "@playwright/test";
 
-const config = {
+const config: PlaywrightTestConfig = {
   testDir: "./tests",
   timeout: 5_000,
   expect: {
     timeout: 5_000,
   },
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
+  retries: 1,
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? "github" : "list",
   use: {
     actionTimeout: 0,
-    trace: "on-first-retry",
+    trace: process.env.CI ? "off" : "on-first-retry",
   },
   webServer: {
     command: "npm run dev",

@@ -5,7 +5,10 @@
 
 ![](./screenshot.jpg)
 
-You want a simple file browser for your website, without the hassle of a front-end framework ? Here is a simple custom element for you.
+You want a simple file browser for your website, without the hassle of a front-end framework ? Here is a simple custom
+element for you.
+
+- [Demonstration (codesandbox.io)](https://km7mr7.csb.app)
 
 First register the custom element (the lang is infered from the html "lang" attribute)
 
@@ -42,13 +45,53 @@ filemanager.addEventListener("selectfile", e => {
 | Attribute    | Description                                                 | Default |
 |--------------|-------------------------------------------------------------|---------|
 | endpoint     | The base url for the file and folder API                    |         |
+| readonly     | Do not allow file deletion or creation                      | false   |
 | layout       | Files layout "rows" or "grid"                               | grid    |
 | lazy-folders | Should all folder be lazy loaded with a new call to the API | false   |
 | hidden       | Work like the default HTML attribute                        | false   |
 
 ## Events
 
-| Name         | Description                                        |
-|--------------|----------------------------------------------------|
-| close        | The user clicked on the overlay to close the modal |
-| fileSelected | The use selected a file                            |
+| Name        | Description                                        |
+|-------------|----------------------------------------------------|
+| close       | The user clicked on the overlay to close the modal |
+| fileselect  | The use selected a file                            |
+
+## Options
+
+Options can be set on the `register()` method as a second argument. All the options are optional
+
+| Name            | Type     | Description                                |
+|-----------------|----------|--------------------------------------------|
+| readOnly        | bool     | Do not allow file deletion or creation     |
+| endpoint        | string   | Endpoint for the REST API                  |
+| httpHeaders     | object   | Additional headers to send to the endpoint |
+| getFiles()      | function | Custom API to retrieve files               |
+| getFolders()    | function | Custom API to retrieve folders             |
+| deleteFile()    | function | Custom API to delete file                  |
+| deleteFolder()  | function | Custom API to delete folder                |
+| uploadFile()    | function | Custom API to upload file                  |
+| createFolder()  | function | Custom API to create folder                |
+
+## Custom API
+
+If you do not use a traditional REST API you can overwrite the method used to fetch the data.
+
+```ts
+import type {File as FileType, Folder} from 'filemanager-element'
+
+FileManager.register('my-file-manager', {
+  getFiles (folder?: Folder): Promise<FileType[]> {
+  },
+  getFolders (parent?: Folder): Promise<Folder> {
+  },
+  createFolder (params: Pick<Folder, "parent" | "name">): Promise<Folder> {
+  },
+  deleteFile (file: FileType): Promise<void> {
+  },
+  deleteFolder (folder: Folder): Promise<void> {
+  },
+  uploadFile (file: File, folder: Folder): Promise<Filetype> {
+  }
+})
+```
